@@ -1,7 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class Template extends FUEL_Library {
+class Template {
 
 	protected $CI;
 
