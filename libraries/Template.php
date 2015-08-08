@@ -42,4 +42,9 @@ class Template {
 
 		return $this->CI->load->view('templates/' . $template_view, $vars, $return);
 	}
+
+	public function asset($asset_view, $vars = array(), $return = TRUE)
+	{
+		return $this->CI->load->view('assets/' . $asset_view);
+	}
 }
