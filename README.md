@@ -1,2 +1,4 @@
-# ci-fuel
-CodeIgniter Fuel, level-up your CodeIgniter applications.
+# CodeIgniter Fuel
+Level-up your CodeIgniter applications.
+
+* Template
