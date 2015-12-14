@@ -1,0 +1,1 @@
+<meta name="copyright" content="Copyright ©. All rights reserved.">
