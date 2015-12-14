@@ -1,7 +1,7 @@
 {
 	"name": "epickris/ci-fuel",
 	"description": "CodeIgniter Fuel, level-up your CodeIgniter applications.",
-	"type": "codeigniter-package"
+	"type": "codeigniter-package",
 	"authors": [
 		{
 			"name": "Kristian Matthews",
