@@ -1,0 +1,18 @@
+{
+	"name": "epickris/ci-fuel",
+	"description": "CodeIgniter Fuel, level-up your CodeIgniter applications.",
+	"type": "codeigniter-package"
+	"authors": [
+		{
+			"name": "Kristian Matthews",
+			"email": "kristian.matthews@me.com",
+			"homepage": "https://epickris.com",
+			"role": "Developer"
+		}
+	],
+	"support": {
+		"issues": "https://github.com/EpicKris/ci-fuel/issues",
+		"wiki": "https://github.com/EpicKris/ci-fuel/wiki",
+		"source": "https://github.com/EpicKris/ci-fuel"
+	}
+}
