@@ -14,5 +14,8 @@
 		"issues": "https://github.com/EpicKris/ci-fuel/issues",
 		"wiki": "https://github.com/EpicKris/ci-fuel/wiki",
 		"source": "https://github.com/EpicKris/ci-fuel"
+	},
+	"require": {
+		"aws/aws-sdk-php": "^3"
 	}
 }
