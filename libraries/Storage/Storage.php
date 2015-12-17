@@ -1,7 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class Storage extends CI_DB_driver {
+class Storage extends CI_Driver_Library {
 
 	protected $CI;
 
@@ -13,6 +13,10 @@ class Storage extends CI_DB_driver {
 	public function __construct($params = NULL)
 	{
 		$this->CI =& get_instance();
+
+		$this->CI->load->helper('storage');
+
+		$this->CI->config->load('storage');
 
 		if ( ! file_exists($config_path = APPPATH . 'config/' . ENVIRONMENT . '/storage.php') && ! file_exists($config_path = APPPATH . 'config/storage.php'))
 		{
@@ -39,11 +43,6 @@ class Storage extends CI_DB_driver {
 		if ( ! isset($storage) || count($storage) === 0)
 		{
 			show_error('No storage settings were found in the storage config file.');
-		}
-
-		if ( ! is_null($params))
-		{
-			$active_group = $params;
 		}
 
 		if ( ! isset($active_group))
@@ -95,5 +94,67 @@ class Storage extends CI_DB_driver {
 	public function __get($name)
 	{
 		return $this->driver->$name;
+	}
+
+	/**
+	 * CDN URL
+	 */
+	public function cdn_url($uri = '', $protocol = NULL)
+	{
+		$cdn_url = $this->CI->config->slash_item('cdn_url');
+
+		if (empty($cdn_url)) $cdn_url = $this->CI->config->slash_item('base_url');
+
+		if (isset($protocol))
+		{
+			if ($protocol === '')
+			{
+				$cdn_url = substr($cdn_url, strpos($cdn_url, '//'));
+			}
+			else
+			{
+				$cdn_url = $protocol . substr($cdn_url, strpos($cdn_url, '://'));
+			}
+		}
+
+		if (empty($uri)) return $cdn_url . $this->CI->config->item('cdn_path');
+
+		if ($this->CI->config->item('enable_query_strings') === FALSE)
+		{
+			if (is_array($uri))
+			{
+				$uri = implode('/', $uri);
+			}
+			trim($uri, '/');
+		}
+		else if (is_array($uri))
+		{
+			http_build_query($uri);
+		}
+
+		if ($this->CI->config->item('enable_query_strings') === FALSE)
+		{
+			$suffix = isset($this->CI->config->config['url_suffix']) ? $this->CI->config->config['url_suffix'] : '';
+
+			if ($suffix !== '')
+			{
+				if (($offset = strpos($uri, '?')) !== FALSE)
+				{
+					$uri = substr($uri, 0, $offset) . $suffix . substr($uri, $offset);
+				}
+				else
+				{
+					$uri .= $suffix;
+				}
+			}
+
+			return $cdn_url . $this->CI->config->item('cdn_path') . $uri;
+		}
+		else if (strpos($uri, '?') === FALSE)
+		{
+			$uri = '?' . $uri;
+		}
+
+		return $cdn_url . $this->CI->config->item('cdn_path') . $uri;
 	}
 }
