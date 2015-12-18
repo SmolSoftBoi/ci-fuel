@@ -117,7 +117,7 @@ class Storage extends CI_Driver_Library {
 			}
 		}
 
-		if (empty($uri)) return $cdn_url . $this->CI->config->item('cdn_path');
+		if (empty($uri)) return $cdn_url . $this->CI->config->slash_item('cdn_path');
 
 		if ($this->CI->config->item('enable_query_strings') === FALSE)
 		{
@@ -148,13 +148,13 @@ class Storage extends CI_Driver_Library {
 				}
 			}
 
-			return $cdn_url . $this->CI->config->item('cdn_path') . $uri;
+			return $cdn_url . $this->CI->config->slash_item('cdn_path') . $uri;
 		}
 		else if (strpos($uri, '?') === FALSE)
 		{
 			$uri = '?' . $uri;
 		}
 
-		return $cdn_url . $this->CI->config->item('cdn_path') . $uri;
+		return $cdn_url . $this->CI->config->slash_item('cdn_path') . $uri;
 	}
 }
