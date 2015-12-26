@@ -4,9 +4,11 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 /**
  * Authentication library
  */
-class Auth {
+class Auth extends CI_Driver_Library {
 
 	protected $CI;
+
+	private $driver;
 
 	private $config;
 
@@ -30,6 +32,20 @@ class Auth {
 		$this->config = $this->CI->config->load('auth', TRUE)['auth'];
 
 		$this->timestamp = now();
+
+		require_once(dirname(__FILE__) . '/Storage_driver.php');
+
+		$driver_path = dirname(__FILE__) . '/drivers/Auth_auth.php';
+
+		file_exists($driver_path) || show_error('Invalid authentication driver');
+
+		require_once($driver_path);
+
+		$auth = new 'Auth_auth'($params);
+
+		$auth->initialize();
+
+		$this->driver = $auth;
 
 		log_message('debug', 'Authentication Library Initialized');
 	}
@@ -75,11 +91,30 @@ class Auth {
 	}
 
 	/**
+	 * Is authed by role
+	 */
+	public function authed_by_role($roles)
+	{
+		if ( ! is_array($roles)) $roles = array($roles);
+
+		foreach ($roles as $role) if ($this->authed() && in_array($role, $this->CI->session->userdata($this->config['session_prefix'] . 'roles'))) return TRUE;
+
+		return FALSE;
+	}
+
+	public function authed_by_group($group)
+	{
+		if ($this->authed() && in_array($group, $this->CI->session->userdata($this->config['session_prefix'] . 'groups'))) return TRUE;
+
+		return FALSE;
+	}
+
+	/**
 	 * Verify and sign in
 	 */
 	public function sign_in($credentials, $remember = FALSE)
 	{
-
+		return $this->driver->sign_in($credentials, $remember);
 	}
 
 	/**
@@ -87,7 +122,7 @@ class Auth {
 	 */
 	public function sign_in_by_user_id($user_id, $remember = FALSE)
 	{
-
+		return $this->driver->sign_in_by_user_id($user_id, $remember);
 	}
 
 	/**
@@ -95,7 +130,7 @@ class Auth {
 	 */
 	public function sign_in_once($credentials)
 	{
-
+		return $this->driver->sign_in_once($credentials);
 	}
 
 	/**
@@ -103,7 +138,7 @@ class Auth {
 	 */
 	public function sign_in_once_by_user_id($user_id)
 	{
-
+		return $this->driver->sign_in_once_by_user_id($user_id);
 	}
 
 	/**
@@ -111,7 +146,7 @@ class Auth {
 	 */
 	public function sign_out()
 	{
-		$this->session->sess_destroy();
+		$this->driver->sign_out();
 	}
 
 	/**
@@ -119,6 +154,6 @@ class Auth {
 	 */
 	public function validate($credentials)
 	{
-
+		return $this->driver->validate($credentials);
 	}
 }
