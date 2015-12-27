@@ -1,17 +1,20 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-function put_csv($fields)
+if ( ! function_exists('put_csv'))
 {
-	$fp = fopen('php://temp', 'r+');
+	function put_csv($fields)
+	{
+		$fp = fopen('php://temp', 'r+');
 
-	fputcsv($fp, $fields);
+		fputcsv($fp, $fields);
 
-	rewind($fp);
+		rewind($fp);
 
-	$output = fgets($fp);
+		$output = fgets($fp);
 
-	fclose($fp);
+		fclose($fp);
 
-	return $output;
+		return $output;
+	}
 }
