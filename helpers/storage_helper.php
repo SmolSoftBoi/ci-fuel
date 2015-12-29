@@ -5,7 +5,7 @@ function cdn_url($uri = '', $protocol = NULL)
 {
 	$CI =& get_instance();
 
-	$CI->load->library('storage');
+	$CI->load->driver('storage');
 
 	return $CI->storage->cdn_url($uri, $protocol);
 }

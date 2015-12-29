@@ -14,7 +14,7 @@ class Storage_file extends Storage_driver {
 
 		array_pop($paths);
 
-		$paths = implode('/', $paths)
+		$paths = implode('/', $paths);
 
 		if ( ! is_dir($paths)) mkdir($paths);
 
