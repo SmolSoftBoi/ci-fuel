@@ -54,20 +54,19 @@ class Events {
 	/**
 	 * Calls a particular event.
 	 *
-	 * @param null  $event   Event name.
+	 * @param       $class   Class name.
+	 * @param       $event   Event name.
 	 * @param array ...$data Event data.
 	 *
 	 * @return mixed
 	 */
-	public function call_event($event = NULL, ...$data)
+	public function call_event($class, $event, ...$data)
 	{
-		if (is_null($event)) return;
+		if ( ! isset($this->events[$class][$event])) return;
 
-		if ( ! isset($this->events[$event])) return;
-
-		foreach ($this->events[$event] as $event_item)
+		foreach ($this->events[$class][$event] as $run_event)
 		{
-			$run_result = $this->run_event($event_item, ...$data);
+			$run_result = $this->run_event($run_event, ...$data);
 
 			if ( ! is_null($run_result)) array_push($result, $run_result);
 		}
