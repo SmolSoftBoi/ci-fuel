@@ -64,6 +64,13 @@ class Events {
 	{
 		if ( ! isset($this->events[$class][$event])) return;
 
+		if ( ! isset($this->events[$class][$event][0]))
+		{
+			$this->events[$class][$event] = array($this->events[$class][$event]);
+		}
+
+		$result = array();
+
 		foreach ($this->events[$class][$event] as $run_event)
 		{
 			$run_result = $this->run_event($run_event, ...$data);
@@ -86,19 +93,22 @@ class Events {
 	{
 		if ($this->in_progress) return;
 
-		if ( ! isset($event['filepath'], $event['filename'])) return;
+		if ( ! isset($event['filepath'])) return;
 
-		$filepath = APPPATH . $event['filepath'] . '/' . $event['filename'];
+		$filepath = APPPATH . $event['filepath'];
 
 		if ( ! file_exists($filepath)) return;
 
+		$class = $event['class'];
+		$function = $event['function'];
+
 		$this->in_progress = TRUE;
 
-		if (isset($this->objects[$events['class']]))
+		if (isset($this->objects[$class]))
 		{
-			if (method_exists($this->objects[$events['class']], $events['function']))
+			if (method_exists($this->objects[$class], $function))
 			{
-				$result = $this->objects[$events['class']]->$events['function'](...$data);
+				$result = $this->objects[$class]->$function(...$data);
 			}
 			else
 			{
@@ -109,18 +119,18 @@ class Events {
 		}
 		else
 		{
-			if ( ! class_exists($event['class'], FALSE)) require_once($filepath);
+			if ( ! class_exists($class, FALSE)) require($filepath);
 
-			if ( ! class_exists($event['class'], FALSE) || method_exists($event['class'], $event['function']))
+			if ( ! class_exists($class, FALSE) || ! method_exists($class, $function))
 			{
 				$this->in_progress = FALSE;
 
 				return;
 			}
 
-			$this->objects[$event['class']] = new $event['class']();
+			$this->objects[$class] = new $class();
 
-			$result = $this->objects[$event['class']]->$event['function'](...$data);
+			$result = $this->objects[$class]->$function(...$data);
 		}
 
 		$this->in_progress = FALSE;
