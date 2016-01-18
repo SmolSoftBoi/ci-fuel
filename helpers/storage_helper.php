@@ -1,11 +1,14 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-function cdn_url($uri = '', $protocol = NULL)
+if ( ! function_exists('cdn_url'))
 {
-	$CI =& get_instance();
+	function cdn_url($uri = '', $protocol = NULL)
+	{
+		$CI =& get_instance();
 
-	$CI->load->library('storage');
+		$CI->load->library('storage');
 
-	return $CI->storage->cdn_url($uri, $protocol);
+		return $CI->storage->cdn_url($uri, $protocol);
+	}
 }

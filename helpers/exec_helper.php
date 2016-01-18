@@ -1,7 +1,10 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-function exec_bg($command)
+if ( ! function_exists('exec_bg'))
 {
-	exec($command . ' >/dev/null 2>&1');
+	function exec_bg($command)
+	{
+		exec($command . ' >/dev/null 2>&1');
+	}
 }
