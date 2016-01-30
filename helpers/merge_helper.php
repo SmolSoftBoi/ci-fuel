@@ -12,6 +12,6 @@ if ( ! function_exists('merge'))
 	 */
 	function merge(...$arrays)
 	{
-		return (gettype($array)) array_merge((array) $array, (array) ...$arrays);
+		return (gettype($array)) array_merge((array) ...$arrays);
 	}
 }
