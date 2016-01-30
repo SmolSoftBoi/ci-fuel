@@ -36,6 +36,7 @@ class Fuel_autoload {
 			'csv',
 			'exec',
 			'file',
+			'merge',
 			'storage'
 		));
 
