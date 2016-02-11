@@ -7,7 +7,7 @@ if ( ! function_exists('cdn_url'))
 	{
 		$CI =& get_instance();
 
-		$CI->load->library('storage');
+		$CI->load->driver('storage');
 
 		return $CI->storage->cdn_url($uri, $protocol);
 	}
