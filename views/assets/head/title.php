@@ -1,1 +1,0 @@
-<title><?php if (isset($title)): ?><?= $title ?><?php endif; ?></title>
