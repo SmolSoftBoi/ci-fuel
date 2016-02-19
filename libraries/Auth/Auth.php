@@ -51,7 +51,7 @@ class Auth extends CI_Driver_Library {
 
 		$this->timestamp = now();
 
-		require_once(dirname(__FILE__) . '/Storage_driver.php');
+		require_once(dirname(__FILE__) . '/Auth_driver.php');
 
 		$driver_path = dirname(__FILE__) . '/drivers/Auth_default.php';
 
