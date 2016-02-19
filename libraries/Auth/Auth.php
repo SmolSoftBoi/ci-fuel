@@ -53,7 +53,7 @@ class Auth extends CI_Driver_Library {
 
 		require_once(dirname(__FILE__) . '/Storage_driver.php');
 
-		$driver_path = dirname(__FILE__) . '/drivers/Auth_auth.php';
+		$driver_path = dirname(__FILE__) . '/drivers/Auth_default.php';
 
 		file_exists($driver_path) || show_error('Invalid authentication driver');
 
@@ -77,9 +77,11 @@ class Auth extends CI_Driver_Library {
 	 */
 	public function authed($redirect = TRUE)
 	{
-		if ($events = $this->CI->load->is_loaded('Events') !== FALSE)
+		$events_library = $this->CI->load->is_loaded('Events');
+
+		if ($events_library !== FALSE)
 		{
-			$this->CI->$events->call_event(__CLASS__, 'pre_authed', $roles);
+			$this->CI->$events_library->call_event(__CLASS__, 'pre_authed');
 		}
 
 		if ($_SESSION[$this->config['session_prefix'] . 'authed'] === TRUE)
@@ -104,9 +106,11 @@ class Auth extends CI_Driver_Library {
 	 */
 	public function authed_guest($redirect = TRUE)
 	{
-		if ($events = $this->CI->load->is_loaded('Events') !== FALSE)
+		$events_library = $this->CI->load->is_loaded('Events');
+
+		if ($events_library !== FALSE)
 		{
-			$this->CI->$events->call_event(__CLASS__, 'pre_authed_guest', $roles);
+			$this->CI->$events_library->call_event(__CLASS__, 'pre_authed_guest');
 		}
 
 		if ($this->authed($redirect)
@@ -133,9 +137,11 @@ class Auth extends CI_Driver_Library {
 	 */
 	public function authed_by_remember($redirect = TRUE)
 	{
-		if ($events = $this->CI->load->is_loaded('Events') !== FALSE)
+		$events_library = $this->CI->load->is_loaded('Events');
+
+		if ($events_library !== FALSE)
 		{
-			$this->CI->$events->call_event(__CLASS__, 'pre_authed_by_remember', $roles);
+			$this->CI->$events_library->call_event(__CLASS__, 'pre_authed_by_remember');
 		}
 
 		if ($this->authed($redirect)
@@ -162,9 +168,11 @@ class Auth extends CI_Driver_Library {
 	 */
 	public function authed_guest_by_remember($redirect = TRUE)
 	{
-		if ($events = $this->CI->load->is_loaded('Events') !== FALSE)
+		$events_library = $this->CI->load->is_loaded('Events');
+
+		if ($events_library !== FALSE)
 		{
-			$this->CI->$events->call_event(__CLASS__, 'pre_authed_guest_by_remember', $roles);
+			$this->CI->$events_library->call_event(__CLASS__, 'pre_authed_guest_by_remember');
 		}
 
 		if ($this->authed_guest($redirect) && $this->authed_by_remember($redirect))
@@ -191,9 +199,11 @@ class Auth extends CI_Driver_Library {
 	 */
 	public function authed_by_role($roles, $redirect = TRUE)
 	{
-		if ($events = $this->CI->load->is_loaded('Events') !== FALSE)
+		$events_library = $this->CI->load->is_loaded('Events');
+
+		if ($events_library !== FALSE)
 		{
-			$this->CI->$events->call_event(__CLASS__, 'pre_authed_by_role', $roles);
+			$this->CI->$events_library->call_event(__CLASS__, 'pre_authed_by_role', $roles);
 		}
 
 		if ( ! is_array($roles))
@@ -224,9 +234,11 @@ class Auth extends CI_Driver_Library {
 	 */
 	public function authed_by_group($group, $redirect = TRUE)
 	{
-		if ($events = $this->CI->load->is_loaded('Events') !== FALSE)
+		$events_library = $this->CI->load->is_loaded('Events');
+
+		if ($events_library !== FALSE)
 		{
-			$this->CI->$events->call_event(__CLASS__, 'pre_authed_by_group', $roles);
+			$this->CI->$events_library->call_event(__CLASS__, 'pre_authed_by_group', $group5);
 		}
 
 		if ($this->authed()

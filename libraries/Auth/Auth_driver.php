@@ -115,7 +115,7 @@ abstract class Auth_driver extends CI_Driver {
 	 *
 	 * @param array $userdata Userdata.
 	 */
-	private function auth($userdata = array())
+	protected function auth($userdata = array())
 	{
 		$userdata = array_merge(array(
 			'roles'  => array(),
@@ -135,7 +135,7 @@ abstract class Auth_driver extends CI_Driver {
 	 *
 	 * @param array $userdata Userdata.
 	 */
-	private function auth_guest($userdata = array())
+	protected function auth_guest($userdata = array())
 	{
 		$userdata = array_merge(array(
 			'roles'  => array(),
@@ -156,7 +156,7 @@ abstract class Auth_driver extends CI_Driver {
 	 *
 	 * @param array $userdata Userdata.
 	 */
-	private function auth_by_remember($userdata = array())
+	protected function auth_by_remember($userdata = array())
 	{
 		$userdata = array_merge(array(
 			'roles'  => array(),
@@ -177,7 +177,7 @@ abstract class Auth_driver extends CI_Driver {
 	 *
 	 * @param array $userdata Userdata.
 	 */
-	private function auth_guest_by_remember($userdata = array())
+	protected function auth_guest_by_remember($userdata = array())
 	{
 		$userdata = array_merge(array(
 			'roles'  => array(),
