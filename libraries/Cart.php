@@ -1,26 +1,43 @@
 <?php
+/**
+ * Copyright © 2015 - 2016 Kristian Matthews. All rights reserved.
+ */
+
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 /**
- * Cart library from CodeIgniter 2
+ * Cart library.
  */
 class Cart implements Serializable {
 
+	/**
+	 * @var CI_Controller CodeIgniter instance.
+	 */
 	protected $CI;
 
-	// Regular expression rules to validate product ID and name
-	private $product_id_rules   = '\.a-z0-9_-';     // Alpha-numeric, dashes, underscores, or periods
+	/**
+	 * @var string Regular expression rule to validate product ID.
+	 */
+	private $product_id_rules = '\.a-z0-9_-'; // Alpha-numeric, dashes, underscores, or periods
+
+	/**
+	 * @var string Regular expression rule to validate product name.
+	 */
 	private $product_name_rules = '\.\:\-_ a-z0-9'; // Alpha-numeric, dashes, underscores, colons, or periods
 
+	/**
+	 * @var array Cart contents.
+	 */
 	private $cart_contents = array(
 		'cart_total'  => 0,
 		'items_count' => 0
 	);
 
 	/**
-	 * Constructor
+	 * Cart library constructor.
+	 * Loads session library to store cart contents.
 	 *
-	 * Loads session library to store cart contents
+	 * @param array $config Configuration.
 	 */
 	public function __construct($config = array())
 	{
@@ -39,7 +56,9 @@ class Cart implements Serializable {
 	}
 
 	/**
-	 * Insert items into cart and save cart to session
+	 * Insert items into cart and save cart to session.
+	 *
+	 * @param array $items Items.
 	 */
 	public function insert($items = array())
 	{
@@ -53,13 +72,19 @@ class Cart implements Serializable {
 
 		$save_cart = FALSE;
 
-		if (isset($items['id'])) $items = array($items);
+		if (isset($items['id']))
+		{
+			$items = array($items);
+		}
 
 		foreach ($items as $item)
 		{
 			if (isset($item['id']) && isset($item['qty']))
 			{
-				if ($this->insert_item($item)) $save_cart = TRUE;
+				if ($this->insert_item($item))
+				{
+					$save_cart = TRUE;
+				}
 			}
 		}
 
@@ -74,22 +99,33 @@ class Cart implements Serializable {
 	}
 
 	/**
-	 * Update iitems into cart and save cart to session
+	 * Update iitems into cart and save cart to session.
+	 *
+	 * @param array $items Items.
 	 */
 	public function update($items = array())
 	{
 		// Check for items
-		if ( ! is_array($items) || count($items) === 0) return FALSE;
+		if ( ! is_array($items) || count($items) === 0)
+		{
+			return FALSE;
+		}
 
 		$save_cart = FALSE;
 
-		if (isset($items['row_id'])) $items = array($items);
+		if (isset($items['row_id']))
+		{
+			$items = array($items);
+		}
 
 		foreach ($items as $item)
 		{
 			if (isset($item['row_id']) && isset($item['qty']))
 			{
-				if ($this->update_item($item)) $save_cart = TRUE;
+				if ($this->update_item($item))
+				{
+					$save_cart = TRUE;
+				}
 			}
 		}
 
@@ -104,7 +140,9 @@ class Cart implements Serializable {
 	}
 
 	/**
-	 * Cart total
+	 * Cart total.
+	 *
+	 * @return float Cart total.
 	 */
 	public function total()
 	{
@@ -112,7 +150,9 @@ class Cart implements Serializable {
 	}
 
 	/**
-	 * Total items
+	 * Total items.
+	 *
+	 * @return int Total items.
 	 */
 	public function items_count()
 	{
@@ -120,7 +160,9 @@ class Cart implements Serializable {
 	}
 
 	/**
-	 * Cart contents
+	 * Cart contents.
+	 *
+	 * @return array Cart contents.
 	 */
 	public function contents()
 	{
@@ -128,31 +170,52 @@ class Cart implements Serializable {
 	}
 
 	/**
-	 * Has options
+	 * Has options.
+	 *
+	 * @param string $row_id Row ID.
+	 *
+	 * @return bool
 	 */
 	public function has_options($row_id = '')
 	{
-		if ( ! isset($this->cart_contents['items'][$row_id]['options']) || count($this->cart_contents['items'][$row_id]['options']) === 0) return FALSE;
+		if ( ! isset($this->cart_contents['items'][$row_id]['options'])
+		     || count($this->cart_contents['items'][$row_id]['options']) === 0
+		)
+		{
+			return FALSE;
+		}
 
 		return TRUE;
 	}
 
 	/**
-	 * Product options
+	 * Product options.
+	 *
+	 * @param string $row_id Row ID.
 	 */
 	public function product_options($row_id = '')
 	{
-		if ( ! isset($this->cart_contents['items'][$row_id]['options'])) return array();
+		if ( ! isset($this->cart_contents['items'][$row_id]['options']))
+		{
+			return array();
+		}
 
 		return $this->cart_contents['items'][$row_id]['options'];
 	}
 
 	/**
-	 * Format number
+	 * Format number.
+	 *
+	 * @param string $n Number.
+	 *
+	 * @return flout Formatted number.
 	 */
 	public function format_number($n = '')
 	{
-		if ($n === '') return '';
+		if ($n === '')
+		{
+			return '';
+		}
 
 		// Remove anything that isn't a number or decimal
 		$n = trim(preg_replace('/([^0-9\.])/i', '', $n));
@@ -161,7 +224,7 @@ class Cart implements Serializable {
 	}
 
 	/**
-	 * Destroy the cart
+	 * Destroy the cart.
 	 */
 	public function destroy()
 	{
@@ -170,11 +233,11 @@ class Cart implements Serializable {
 		$this->cart_contents['cart_total'] = 0;
 		$this->cart_contents['items_count'] = 0;
 
-		$this->CI->session->unset_userdata('cart_contents');
+		unset($_SESSION['cart_contents']);
 	}
 
 	/**
-	 * Serialize cart contents
+	 * Serialize cart contents.
 	 */
 	public function serialize()
 	{
@@ -182,7 +245,7 @@ class Cart implements Serializable {
 	}
 
 	/**
-	 * Unserialize cart contents
+	 * Unserialize cart contents.
 	 */
 	public function unserialize($cart_contents)
 	{
@@ -190,7 +253,11 @@ class Cart implements Serializable {
 	}
 
 	/**
-	 * Insert items into cart and save cart to session
+	 * Insert items into cart and save cart to session.
+	 *
+	 * @param array $item Item.
+	 *
+	 * @return mixed
 	 */
 	private function insert_item($item = array())
 	{
@@ -203,7 +270,6 @@ class Cart implements Serializable {
 		}
 
 
-
 		// Check for ID, quantity, price, and name
 		if ( ! isset($item['id']) || ! isset($item['qty']) || ! isset($item['price']) || ! isset($item['name']))
 		{
@@ -213,35 +279,36 @@ class Cart implements Serializable {
 		}
 
 
-
 		// Prep quantity
 		$item['qty'] = trim(preg_replace('/([^0-9])/i', '', $item['qty']));
 		// Trim leading zeros
 		$item['qty'] = trim(preg_replace('/(^[0]+)/i', '', $item['qty']));
 
 		// If quantity is zero or blank
-		if ( ! is_numeric($item['qty']) || $item['qty'] === 0) return FALSE;
-
+		if ( ! is_numeric($item['qty']) || $item['qty'] === 0)
+		{
+			return FALSE;
+		}
 
 
 		// Validate product ID
 		if ( ! preg_match('/^[' . $this->product_id_rules . ']+$/i', $item['id']))
 		{
-			log_message('error', 'An invalid name was submitted as the product name: ' . $item['name'] . '. The name can only contain alpha-numberic characters, dashes, and underscores.');
+			log_message('error', 'An invalid name was submitted as the product name: ' . $item['name']
+			                     . '. The name can only contain alpha-numberic characters, dashes, and underscores.');
 
 			return FALSE;
 		}
-
 
 
 		// Validate product name
 		if ( ! preg_match('/^[' . $this->product_name_rules . ']+$/i', $item['name']))
 		{
-			log_message('error', 'An invalid name was submitted as the product name: ' . $item['name'] . '. The name can only contain alpha-numeric characters, dashes, underscores, colons, and spaces.');
+			log_message('error', 'An invalid name was submitted as the product name: ' . $item['name']
+			                     . '. The name can only contain alpha-numeric characters, dashes, underscores, colons, and spaces.');
 
 			return FALSE;
 		}
-
 
 
 		// Prep price
@@ -258,13 +325,14 @@ class Cart implements Serializable {
 		}
 
 
-
 		// Create unique ID for item
 		$options = '';
-		if ( isset($item['options']) && count($item['options']) > 0) implode('', $item['options']);
+		if (isset($item['options']) && count($item['options']) > 0)
+		{
+			implode('', $item['options']);
+		}
 
 		$row_id = hash('sha224', $item['id'] . $options);
-
 
 
 		// Unset duplicate row ID
@@ -278,13 +346,19 @@ class Cart implements Serializable {
 	}
 
 	/**
-	 * Update items into cart and save cart to session
+	 * Update items into cart and save cart to session.
+	 *
+	 * @param array $item Item.
+	 *
+	 * @return bool
 	 */
 	private function update_item($item = array())
 	{
 		// Check for row ID, and quantity
-		if ( ! isset($item['row_id']) || ! isset($item['qty'])) return FALSE;
-
+		if ( ! isset($item['row_id']) || ! isset($item['qty']))
+		{
+			return FALSE;
+		}
 
 
 		// Prep quantity
@@ -293,12 +367,17 @@ class Cart implements Serializable {
 		$item['qty'] = trim(preg_replace('/(^[0]+)/i', '', $item['qty']));
 
 		// If quantity is zero or blank
-		if ( ! is_numeric($item['qty']) || $item['qty'] === 0) return FALSE;
-
+		if ( ! is_numeric($item['qty']) || $item['qty'] === 0)
+		{
+			return FALSE;
+		}
 
 
 		// Check if quantity differs
-		if ($this->cart_contents['items'][$item['row_id']]['qty'] === $item['qty']) return FALSE;
+		if ($this->cart_contents['items'][$item['row_id']]['qty'] === $item['qty'])
+		{
+			return FALSE;
+		}
 
 		// If quantity is zero or blank
 		if ( ! is_numeric($item['qty']) || $item['qty'] === 0)
@@ -313,6 +392,11 @@ class Cart implements Serializable {
 		return TRUE;
 	}
 
+	/**
+	 * Save cart.
+	 *
+	 * @return bool
+	 */
 	private function save_cart()
 	{
 		// Unset cart total, and total items
@@ -329,7 +413,8 @@ class Cart implements Serializable {
 			$items += $item['qty'];
 
 			// Set cart sub-total
-			$this->cart_contents['items'][$row_id]['sub_total'] = $this->cart_contents[$row_id]['price'] * $this->cart_contents[$row_id]['qty'];
+			$this->cart_contents['items'][$row_id]['sub_total'] = $this->cart_contents[$row_id]['price']
+			                                                      * $this->cart_contents[$row_id]['qty'];
 		}
 
 		// Set cart total, and total items
@@ -344,7 +429,7 @@ class Cart implements Serializable {
 			return FALSE;
 		}
 
-		$this->CI->session->set_userdata('cart_contents', $this->cart_contents);
+		$_SESSION['cart_contents'] = $this->cart_contents;
 
 		return TRUE;
 	}

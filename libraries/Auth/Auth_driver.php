@@ -1,12 +1,30 @@
 <?php
+/**
+ * Copyright © 2015 - 2016 Kristian Matthews. All rights reserved.
+ */
+
 defined('BASEPATH') OR exit('No direct script access allowed');
 
+/**
+ * Authentication driver.
+ */
 abstract class Auth_driver extends CI_Driver {
 
+	/**
+	 * @var string Session prefix.
+	 */
 	public $session_prefix;
 
+	/**
+	 * @var CI_Controller CodeIgniter instance.
+	 */
 	protected $CI;
 
+	/**
+	 * Authentication driver constructor.
+	 *
+	 * @param array $params Parameters.
+	 */
 	public function __construct($params)
 	{
 		$this->CI =& get_instance();
@@ -22,77 +40,21 @@ abstract class Auth_driver extends CI_Driver {
 		log_message('info', 'Storage Driver Initialized');
 	}
 
+	/**
+	 * Authentication driver initialize.
+	 *
+	 * @return bool
+	 */
 	public function initialize()
 	{
 		return TRUE;
 	}
 
 	/**
-	 * Auth
-	 */
-	private function auth($userdata = array())
-	{
-		$userdata = array_merge(array(
-			'roles'  => array(),
-			'groups' => array()
-		), $userdata, array(
-			$this->session_prefix . 'authed') => TRUE
-		));
-
-		$this->CI->session->set_userdata($userdata);
-	}
-
-	/**
-	 * Auth guest
-	 */
-	private function authed_guest($userdata = array())
-	{
-		$userdata = array_merge(array(
-			'roles'  => array(),
-			'groups' => array()
-		), $userdata, array(
-			$this->session_prefix . 'authed') => TRUE,
-			$this->session_prefix . 'guest')  => TRUE
-		));
-
-		$this->CI->session->set_userdata($userdata);
-	}
-
-	/**
-	 * Auth by remember
-	 */
-	private function authed_by_remember($userdata = array())
-	{
-		$userdata = array_merge(array(
-			'roles'  => array(),
-			'groups' => array()
-		), $userdata, array(
-			$this->session_prefix . 'authed')   => TRUE,
-			$this->session_prefix . 'remember') => TRUE
-		));
-
-		$this->CI->session->set_userdata($userdata);
-	}
-
-	/**
-	 * Auth guest by remember
-	 */
-	private function authed_guest_by_remember($userdata = array())
-	{
-		$userdata = array_merge(array(
-			'roles'  => array(),
-			'groups' => array()
-		), $userdata, array(
-			$this->session_prefix . 'authed')   => TRUE,
-			$this->session_prefix . 'guest')    => TRUE,
-			$this->session_prefix . 'remember') => TRUE
-		));
-
-		$this->CI->session->set_userdata($userdata);
-	}
-
-	/**
-	 * Verify and sign in
+	 * Verify and sign in.
+	 *
+	 * @param mixed $credentials Credentials.
+	 * @param bool  $remember    Remember.
 	 */
 	public function sign_in($credentials, $remember = FALSE)
 	{
@@ -100,7 +62,10 @@ abstract class Auth_driver extends CI_Driver {
 	}
 
 	/**
-	 * Sign in by user ID
+	 * Sign in by user ID.
+	 *
+	 * @param int  $user_id  User ID.
+	 * @param bool $remember Remember.
 	 */
 	public function sign_in_by_user_id($user_id, $remember = FALSE)
 	{
@@ -108,7 +73,9 @@ abstract class Auth_driver extends CI_Driver {
 	}
 
 	/**
-	 * Verify and sign in once
+	 * Verify and sign in once.
+	 *
+	 * @param mixed $credentials Credentials.
 	 */
 	public function sign_in_once($credentials)
 	{
@@ -116,7 +83,9 @@ abstract class Auth_driver extends CI_Driver {
 	}
 
 	/**
-	 * Sign in once by user ID
+	 * Sign in once by user ID.
+	 *
+	 * @param int $user_id User ID.
 	 */
 	public function sign_in_once_by_user_id($user_id)
 	{
@@ -124,7 +93,7 @@ abstract class Auth_driver extends CI_Driver {
 	}
 
 	/**
-	 * Sign out
+	 * Sign out.
 	 */
 	public function sign_out()
 	{
@@ -132,10 +101,96 @@ abstract class Auth_driver extends CI_Driver {
 	}
 
 	/**
-	 * Validate credentials
+	 * Validate credentials.
+	 *
+	 * @param mixed $credentials Credentials.
 	 */
 	public function validate($credentials)
 	{
 
+	}
+
+	/**
+	 * Authenticate.
+	 *
+	 * @param array $userdata Userdata.
+	 */
+	protected function auth($userdata = array())
+	{
+		$userdata = array_merge(array(
+			'roles'  => array(),
+			'groups' => array()
+		), $userdata, array(
+			$this->session_prefix . 'authed' => TRUE
+		));
+
+		foreach ($userdata as $key => $value)
+		{
+			$_SESSION[$key] = $value;
+		}
+	}
+
+	/**
+	 * Authenticate guest.
+	 *
+	 * @param array $userdata Userdata.
+	 */
+	protected function auth_guest($userdata = array())
+	{
+		$userdata = array_merge(array(
+			'roles'  => array(),
+			'groups' => array()
+		), $userdata, array(
+			$this->session_prefix . 'authed' => TRUE,
+			$this->session_prefix . 'guest'  => TRUE
+		));
+
+		foreach ($userdata as $key => $value)
+		{
+			$_SESSION[$key] = $value;
+		}
+	}
+
+	/**
+	 * Authenticate by remember.
+	 *
+	 * @param array $userdata Userdata.
+	 */
+	protected function auth_by_remember($userdata = array())
+	{
+		$userdata = array_merge(array(
+			'roles'  => array(),
+			'groups' => array()
+		), $userdata, array(
+			$this->session_prefix . 'authed'   => TRUE,
+			$this->session_prefix . 'remember' => TRUE
+		));
+
+		foreach ($userdata as $key => $value)
+		{
+			$_SESSION[$key] = $value;
+		}
+	}
+
+	/**
+	 * Authenticate guest by remember.
+	 *
+	 * @param array $userdata Userdata.
+	 */
+	protected function auth_guest_by_remember($userdata = array())
+	{
+		$userdata = array_merge(array(
+			'roles'  => array(),
+			'groups' => array()
+		), $userdata, array(
+			$this->session_prefix . 'authed'   => TRUE,
+			$this->session_prefix . 'guest'    => TRUE,
+			$this->session_prefix . 'remember' => TRUE
+		));
+
+		foreach ($userdata as $key => $value)
+		{
+			$_SESSION[$key] = $value;
+		}
 	}
 }

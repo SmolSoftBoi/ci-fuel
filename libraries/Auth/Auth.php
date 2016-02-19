@@ -1,30 +1,48 @@
 <?php
+/**
+ * Copyright © 2015 - 2016 Kristian Matthews. All rights reserved.
+ */
+
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 /**
- * Authentication library
+ * Authentication library.
  */
 class Auth extends CI_Driver_Library {
 
+	/**
+	 * @var array Configuration.
+	 */
+	public $config;
+
+	/**
+	 * @var CI_Controller CodeIgniter instance.
+	 */
 	protected $CI;
 
+	/**
+	 * @var Auth_driver Authentication driver.
+	 */
 	private $driver;
 
-	private $config;
-
+	/**
+	 * @var Timestamp.
+	 */
 	private $timestamp;
 
 	/**
-	 * Constructor
+	 * Authentication library constructor.
 	 */
 	public function __construct()
 	{
 		$this->CI =& get_instance();
 
-		$this->CI->load->library(array('events', 'session'));
-		$this->CI->load->helper('date');
+		$this->CI->load->library('session');
+		$this->CI->load->helper(array('date', 'url'));
 
-		if ( ! file_exists($config_path = APPPATH . 'config/' . ENVIRONMENT . '/auth.php') && ! file_exists($config_path = APPPATH . 'config/auth.php'))
+		if ( ! file_exists($config_path = APPPATH . 'config/' . ENVIRONMENT . '/auth.php')
+		     && ! file_exists($config_path = APPPATH . 'config/auth.php')
+		)
 		{
 			show_error('The configuration file auth.php does not exist.');
 		}
@@ -35,13 +53,15 @@ class Auth extends CI_Driver_Library {
 
 		require_once(dirname(__FILE__) . '/Storage_driver.php');
 
-		$driver_path = dirname(__FILE__) . '/drivers/Auth_auth.php';
+		$driver_path = dirname(__FILE__) . '/drivers/Auth_default.php';
 
 		file_exists($driver_path) || show_error('Invalid authentication driver');
 
 		require_once($driver_path);
 
-		$auth = new 'Auth_auth'($params);
+		$driver = 'Auth_default';
+
+		$auth = new $driver($params);
 
 		$auth->initialize();
 
@@ -51,66 +71,193 @@ class Auth extends CI_Driver_Library {
 	}
 
 	/**
-	 * Is authed
+	 * Is authed.
+	 *
+	 * @return bool
 	 */
-	public function authed()
+	public function authed($redirect = TRUE)
 	{
-		if ($this->CI->session->userdata($this->config['session_prefix'] . 'authed') === TRUE) return TRUE;
+		$events_library = $this->CI->load->is_loaded('Events');
+
+		if ($events_library !== FALSE)
+		{
+			$this->CI->$events_library->call_event(__CLASS__, 'pre_authed');
+		}
+
+		if ($_SESSION[$this->config['session_prefix'] . 'authed'] === TRUE)
+		{
+			$authed = TRUE;
+		}
+
+		$authed = FALSE;
+
+		if ( ! $authed && $redirect)
+		{
+			$this->redirect();
+		}
+
+		return $authed;
+	}
+
+	/**
+	 * Is authed guest.
+	 *
+	 * @return bool
+	 */
+	public function authed_guest($redirect = TRUE)
+	{
+		$events_library = $this->CI->load->is_loaded('Events');
+
+		if ($events_library !== FALSE)
+		{
+			$this->CI->$events_library->call_event(__CLASS__, 'pre_authed_guest');
+		}
+
+		if ($this->authed($redirect)
+		    && $_SESSION[$this->config['session_prefix'] . 'guest'] === TRUE
+		)
+		{
+			$authed = TRUE;
+		}
+
+		$authed = FALSE;
+
+		if ( ! $authed && $redirect)
+		{
+			$this->redirect();
+		}
+
+		return $authed;
+	}
+
+	/**
+	 * Is authed by remember.
+	 *
+	 * @return bool
+	 */
+	public function authed_by_remember($redirect = TRUE)
+	{
+		$events_library = $this->CI->load->is_loaded('Events');
+
+		if ($events_library !== FALSE)
+		{
+			$this->CI->$events_library->call_event(__CLASS__, 'pre_authed_by_remember');
+		}
+
+		if ($this->authed($redirect)
+		    && $_SESSION[$this->config['session_prefix'] . 'remember'] === TRUE
+		)
+		{
+			$authed = TRUE;
+		}
+
+		$authed = FALSE;
+
+		if ( ! $authed && $redirect)
+		{
+			$this->redirect();
+		}
+
+		return $authed;
+	}
+
+	/**
+	 * Is authed guest by remember.
+	 *
+	 * @return bool
+	 */
+	public function authed_guest_by_remember($redirect = TRUE)
+	{
+		$events_library = $this->CI->load->is_loaded('Events');
+
+		if ($events_library !== FALSE)
+		{
+			$this->CI->$events_library->call_event(__CLASS__, 'pre_authed_guest_by_remember');
+		}
+
+		if ($this->authed_guest($redirect) && $this->authed_by_remember($redirect))
+		{
+			$authed = TRUE;
+		}
+
+		$authed = FALSE;
+
+		if ( ! $authed && $redirect)
+		{
+			$this->redirect();
+		}
+
+		return $authed;
+	}
+
+	/**
+	 * Is authed by role.
+	 *
+	 * @param string[] $roles Roles.
+	 *
+	 * @return bool
+	 */
+	public function authed_by_role($roles, $redirect = TRUE)
+	{
+		$events_library = $this->CI->load->is_loaded('Events');
+
+		if ($events_library !== FALSE)
+		{
+			$this->CI->$events_library->call_event(__CLASS__, 'pre_authed_by_role', $roles);
+		}
+
+		if ( ! is_array($roles))
+		{
+			$roles = array($roles);
+		}
+
+		foreach ($roles as $role)
+		{
+			if ($this->authed($redirect)
+			    && in_array($role, $_SESSION[$this->config['session_prefix'] . 'roles'])
+			)
+			{
+				return TRUE;
+			}
+		}
 
 		return FALSE;
 	}
 
 	/**
-	 * Is authed guest
+	 *
+	 * Is authed by group.
+	 *
+	 * @param string $group Group.
+	 *
+	 * @return bool
 	 */
-	public function authed_guest()
+	public function authed_by_group($group, $redirect = TRUE)
 	{
-		if ($this->authed() && $this->CI->session->userdata($this->config['session_prefix'] . 'guest') === TRUE) return TRUE;
+		$events_library = $this->CI->load->is_loaded('Events');
+
+		if ($events_library !== FALSE)
+		{
+			$this->CI->$events_library->call_event(__CLASS__, 'pre_authed_by_group', $group5);
+		}
+
+		if ($this->authed()
+		    && in_array($group, $_SESSION[$this->config['session_prefix'] . 'groups'])
+		)
+		{
+			return TRUE;
+		}
 
 		return FALSE;
 	}
 
 	/**
-	 * Is authed by remember
-	 */
-	public function authed_by_remember()
-	{
-		if ($this->authed() && $this->CI->session->userdata($this->config['session_prefix'] . 'remember') === TRUE) return TRUE;
-
-		return FALSE;
-	}
-
-	/**
-	 * Is authed guest by remember
-	 */
-	public function authed_guest_by_remember()
-	{
-		if ($this->authed_guest() && $this->authed_by_remember()) return TRUE;
-
-		return FALSE;
-	}
-
-	/**
-	 * Is authed by role
-	 */
-	public function authed_by_role($roles)
-	{
-		if ( ! is_array($roles)) $roles = array($roles);
-
-		foreach ($roles as $role) if ($this->authed() && in_array($role, $this->CI->session->userdata($this->config['session_prefix'] . 'roles'))) return TRUE;
-
-		return FALSE;
-	}
-
-	public function authed_by_group($group)
-	{
-		if ($this->authed() && in_array($group, $this->CI->session->userdata($this->config['session_prefix'] . 'groups'))) return TRUE;
-
-		return FALSE;
-	}
-
-	/**
-	 * Verify and sign in
+	 * Verify and sign in.
+	 *
+	 * @param mixed $credentials Credentials.
+	 * @param bool  $remember    Remember.
+	 *
+	 * @return mixed
 	 */
 	public function sign_in($credentials, $remember = FALSE)
 	{
@@ -118,7 +265,12 @@ class Auth extends CI_Driver_Library {
 	}
 
 	/**
-	 * Sign in by user ID
+	 * Sign in by user ID.
+	 *
+	 * @param int  $user_id  User ID.
+	 * @param bool $remember Remember.
+	 *
+	 * @return mixed
 	 */
 	public function sign_in_by_user_id($user_id, $remember = FALSE)
 	{
@@ -126,7 +278,11 @@ class Auth extends CI_Driver_Library {
 	}
 
 	/**
-	 * Verify and sign in once
+	 * Verify and sign in once.
+	 *
+	 * @param mixed $credentials Credentials.
+	 *
+	 * @return mixed
 	 */
 	public function sign_in_once($credentials)
 	{
@@ -135,6 +291,10 @@ class Auth extends CI_Driver_Library {
 
 	/**
 	 * Sign in once by user ID
+	 *
+	 * @param int $user_id User ID.
+	 *
+	 * @return mixed
 	 */
 	public function sign_in_once_by_user_id($user_id)
 	{
@@ -151,9 +311,36 @@ class Auth extends CI_Driver_Library {
 
 	/**
 	 * Validate credentials
+	 *
+	 * @param mixed $credentials Credentials.
+	 *
+	 * @return bool
 	 */
 	public function validate($credentials)
 	{
 		return $this->driver->validate($credentials);
+	}
+
+	/**
+	 * Set URI.
+	 */
+	public function set_uri()
+	{
+		$_SESSION['url'] = uri_string();
+	}
+
+	/**
+	 * Get URI.
+	 *
+	 * @return string URI.
+	 */
+	public function get_uri()
+	{
+		if (isset($_SESSION[$this->config['session_prefix'] . 'url']))
+		{
+			return $_SESSION[$this->config['session_prefix'] . 'url'];
+		}
+
+		return '/';
 	}
 }

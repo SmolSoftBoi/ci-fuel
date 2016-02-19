@@ -1,4 +1,8 @@
 <?php
+/**
+ * Copyright © 2015 - 2016 Kristian Matthews. All rights reserved.
+ */
+
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 if ( ! function_exists('cdn_url'))
@@ -7,7 +11,7 @@ if ( ! function_exists('cdn_url'))
 	{
 		$CI =& get_instance();
 
-		$CI->load->library('storage');
+		$CI->load->driver('storage');
 
 		return $CI->storage->cdn_url($uri, $protocol);
 	}

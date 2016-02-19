@@ -1,4 +1,8 @@
 <?php
+/**
+ * Copyright © 2015 - 2016 Kristian Matthews. All rights reserved.
+ */
+
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Storage_awss3 extends Storage_driver {

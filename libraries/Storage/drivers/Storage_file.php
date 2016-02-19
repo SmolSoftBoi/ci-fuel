@@ -1,4 +1,8 @@
 <?php
+/**
+ * Copyright © 2015 - 2016 Kristian Matthews. All rights reserved.
+ */
+
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Storage_file extends Storage_driver {
@@ -14,7 +18,7 @@ class Storage_file extends Storage_driver {
 
 		array_pop($paths);
 
-		$paths = implode('/', $paths)
+		$paths = implode('/', $paths);
 
 		if ( ! is_dir($paths)) mkdir($paths);
 
