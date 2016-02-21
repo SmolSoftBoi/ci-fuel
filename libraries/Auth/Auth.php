@@ -32,42 +32,56 @@ class Auth extends CI_Driver_Library {
 
 	/**
 	 * Authentication library constructor.
+	 *
+	 * @param array() $params Parameters.
 	 */
-	public function __construct()
+	public function __construct($params = array())
 	{
 		$this->CI =& get_instance();
 
 		$this->CI->load->library('session');
 		$this->CI->load->helper(array('date', 'url'));
 
-		if ( ! file_exists($config_path = APPPATH . 'config/' . ENVIRONMENT . '/auth.php')
-		     && ! file_exists($config_path = APPPATH . 'config/auth.php')
-		)
-		{
-			show_error('The configuration file auth.php does not exist.');
-		}
-
-		$this->config = $this->CI->config->load('auth', TRUE)['auth'];
-
 		$this->timestamp = now();
 
-		require_once(dirname(__FILE__) . '/Auth_driver.php');
+		$this->check_config();
 
-		$driver_path = dirname(__FILE__) . '/drivers/Auth_default.php';
+		if ($this->CI->config->load('auth', TRUE))
+		{
+			$this->config = array_merge($this->config, $this->CI->config->item('auth'));
+		}
 
-		file_exists($driver_path) || show_error('Invalid authentication driver');
+		require_once 'Auth_driver.php';
 
-		require_once($driver_path);
+		$this->driver = $this->load_driver('default');
 
-		$driver = 'Auth_default';
+		$this->driver->initialize($params);
 
-		$auth = new $driver($params);
+		log_message('debug', 'Authentication library initialized.');
+	}
 
-		$auth->initialize();
+	/**
+	 * Authentication library initialize.
+	 *
+	 * @param array() $params Parameters.
+	 */
+	public function initialize($params)
+	{
+		if (isset($params['valid_drivers']))
+		{
+			if (is_array($params))
+			{
+				$params['valid_drivers'] = array_merge($this->valid_drivers, $params['valid_drivers']);
+			}
+		}
 
-		$this->driver = $auth;
-
-		log_message('debug', 'Authentication Library Initialized');
+		if (is_array($params))
+		{
+			foreach ($params as $key => $value)
+			{
+				$this->$key = $value;
+			}
+		}
 	}
 
 	/**
@@ -342,5 +356,30 @@ class Auth extends CI_Driver_Library {
 		}
 
 		return '/';
+	}
+
+	/**
+	 * Check configuration.
+	 */
+	private function check_config()
+	{
+		$config_exists = FALSE;
+
+		foreach ($this->CI->load->get_package_paths() as $package_path)
+		{
+			if (file_exists($package_path . 'config/' . ENVIRONMENT . '/auth.php')
+			    || file_exists($package_path . 'config/auth.php')
+			)
+			{
+				$config_exists = TRUE;
+
+				break;
+			}
+		}
+
+		if ( ! $config_exists)
+		{
+			show_error('Authentication configuration does not exist.', 500, AUTH_CLASS . ' Error');
+		}
 	}
 }

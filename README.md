@@ -4,6 +4,7 @@ Level-up your CodeIgniter applications.
 ## Libraries
 * Authentication
 * Cart
+* Domain
 * Events
 * Storage
 * Template
