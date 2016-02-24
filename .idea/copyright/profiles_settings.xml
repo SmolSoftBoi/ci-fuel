@@ -1,7 +1,8 @@
 <component name="CopyrightManager">
-  <settings default="Kristian Matthews">
+  <settings default="">
     <module2copyright>
-      <element module="All" copyright="Kristian Matthews" />
+      <element module="CodeIgniter Fuel PHP" copyright="Kristian Matthews PHP" />
+      <element module="CodeIgniter Fuel" copyright="Kristian Matthews" />
     </module2copyright>
   </settings>
 </component>
