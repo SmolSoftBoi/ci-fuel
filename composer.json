@@ -10,6 +10,9 @@
 			"role": "Developer"
 		}
 	],
+	"config": {
+		"bin-dir": "bin"
+	},
 	"support": {
 		"issues": "https://github.com/EpicKris/ci-fuel/issues",
 		"wiki": "https://github.com/EpicKris/ci-fuel/wiki",
@@ -17,5 +20,8 @@
 	},
 	"suggest": {
 		"aws/aws-sdk-php": "For AWS storage driver."
+	},
+	"require-dev": {
+		"phpunit/phpunit": "^5"
 	}
 }
