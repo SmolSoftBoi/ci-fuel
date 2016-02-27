@@ -1,2 +1,6 @@
+# Composer
+bin
+vendor
+
 # OS X
 .DS_Store

@@ -1,5 +1,6 @@
 <component name="CopyrightManager">
   <copyright>
+    <option name="allowReplaceKeyword" value="" />
     <option name="myName" value="Kristian Matthews" />
     <option name="notice" value="Copyright © 2015 - &amp;#36;file.lastModified.year Kristian Matthews. All rights reserved." />
   </copyright>

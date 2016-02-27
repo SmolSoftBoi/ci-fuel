@@ -1,0 +1,3 @@
+<component name="DependencyValidationManager">
+  <scope name="CodeIgniter Fuel PHP" pattern="file[ci-fuel]:*.php/&amp;&amp;!file[ci-fuel]:.idea//*" />
+</component>

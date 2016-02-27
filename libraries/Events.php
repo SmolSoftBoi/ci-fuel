@@ -1,6 +1,8 @@
 <?php
 /**
- * Copyright © 2015 - 2016 Kristian Matthews. All rights reserved.
+ *  @copyright Copyright © 2015 - 2016 Kristian Matthews. All rights reserved.
+ *  @author    Kristian Matthews <kristian.matthews@my.westminster.ac.uk>
+ *  @package   CodeIgniter Fuel
  */
 
 defined('BASEPATH') OR exit('No direct script access allowed');
