@@ -262,7 +262,7 @@ class Auth extends CI_Driver_Library {
 
 		if ($events_library !== FALSE)
 		{
-			$this->CI->$events_library->call_event(__CLASS__, 'pre_authed_by_group', $group5);
+			$this->CI->$events_library->call_event(__CLASS__, 'pre_authed_by_group', $group);
 		}
 
 		if ($this->authed()
