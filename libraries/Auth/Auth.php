@@ -1,6 +1,8 @@
 <?php
 /**
- * Copyright © 2015 - 2016 Kristian Matthews. All rights reserved.
+ *  @copyright Copyright © 2015 - 2016 Kristian Matthews. All rights reserved.
+ *  @author    Kristian Matthews <kristian.matthews@my.westminster.ac.uk>
+ *  @package   CodeIgniter Fuel\Libraries\Auth
  */
 
 defined('BASEPATH') OR exit('No direct script access allowed');
@@ -11,22 +13,30 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 class Auth extends CI_Driver_Library {
 
 	/**
-	 * @var array Configuration.
+	 * @var array $config Configuration.
 	 */
-	public $config;
+	public $config = array(
+		'uri' => NULL,
+		'session_prefix' => NULL
+	);
 
 	/**
-	 * @var CI_Controller CodeIgniter instance.
+	 * @var CI_Controller $CI CodeIgniter instance.
 	 */
 	protected $CI;
 
 	/**
-	 * @var Auth_driver Authentication driver.
+	 * @var string[] $valid_drivers Valid drivers.
+	 */
+	protected $valid_drivers = array('default');
+
+	/**
+	 * @var Auth_driver $driver Authentication driver.
 	 */
 	private $driver;
 
 	/**
-	 * @var Timestamp.
+	 * @var int $timestamp Timestamp.
 	 */
 	private $timestamp;
 
