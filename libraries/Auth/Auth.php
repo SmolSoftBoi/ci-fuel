@@ -2,13 +2,15 @@
 /**
  *  @copyright Copyright © 2015 - 2016 Kristian Matthews. All rights reserved.
  *  @author    Kristian Matthews <kristian.matthews@my.westminster.ac.uk>
- *  @package   CodeIgniter Fuel\Libraries\Auth
+ *  @package   CodeIgniter Fuel
  */
 
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 /**
  * Authentication library.
+ *
+ * @package CodeIgniter Fuel\Libraries\Auth
  */
 class Auth extends CI_Driver_Library {
 
@@ -97,6 +99,8 @@ class Auth extends CI_Driver_Library {
 	/**
 	 * Is authed.
 	 *
+	 * @param bool $redirect Redirect.
+	 *
 	 * @return bool
 	 */
 	public function authed($redirect = TRUE)
@@ -108,16 +112,16 @@ class Auth extends CI_Driver_Library {
 			$this->CI->$events_library->call_event(__CLASS__, 'pre_authed');
 		}
 
+		$authed = FALSE;
+
 		if ($_SESSION[$this->config['session_prefix'] . 'authed'] === TRUE)
 		{
 			$authed = TRUE;
 		}
 
-		$authed = FALSE;
-
 		if ( ! $authed && $redirect)
 		{
-			$this->redirect();
+			redirect($this->config['uri']);
 		}
 
 		return $authed;
@@ -125,6 +129,8 @@ class Auth extends CI_Driver_Library {
 
 	/**
 	 * Is authed guest.
+	 *
+	 * @param bool $redirect Redirect.
 	 *
 	 * @return bool
 	 */
@@ -137,6 +143,8 @@ class Auth extends CI_Driver_Library {
 			$this->CI->$events_library->call_event(__CLASS__, 'pre_authed_guest');
 		}
 
+		$authed = FALSE;
+
 		if ($this->authed($redirect)
 		    && $_SESSION[$this->config['session_prefix'] . 'guest'] === TRUE
 		)
@@ -144,11 +152,9 @@ class Auth extends CI_Driver_Library {
 			$authed = TRUE;
 		}
 
-		$authed = FALSE;
-
 		if ( ! $authed && $redirect)
 		{
-			$this->redirect();
+			redirect($this->config['uri']);
 		}
 
 		return $authed;
@@ -156,6 +162,8 @@ class Auth extends CI_Driver_Library {
 
 	/**
 	 * Is authed by remember.
+	 *
+	 * @param bool $redirect Redirect.
 	 *
 	 * @return bool
 	 */
@@ -168,6 +176,8 @@ class Auth extends CI_Driver_Library {
 			$this->CI->$events_library->call_event(__CLASS__, 'pre_authed_by_remember');
 		}
 
+		$authed = FALSE;
+
 		if ($this->authed($redirect)
 		    && $_SESSION[$this->config['session_prefix'] . 'remember'] === TRUE
 		)
@@ -175,11 +185,9 @@ class Auth extends CI_Driver_Library {
 			$authed = TRUE;
 		}
 
-		$authed = FALSE;
-
 		if ( ! $authed && $redirect)
 		{
-			$this->redirect();
+			redirect($this->config['uri']);
 		}
 
 		return $authed;
@@ -187,6 +195,8 @@ class Auth extends CI_Driver_Library {
 
 	/**
 	 * Is authed guest by remember.
+	 *
+	 * @param bool $redirect Redirect.
 	 *
 	 * @return bool
 	 */
@@ -199,16 +209,16 @@ class Auth extends CI_Driver_Library {
 			$this->CI->$events_library->call_event(__CLASS__, 'pre_authed_guest_by_remember');
 		}
 
+		$authed = FALSE;
+
 		if ($this->authed_guest($redirect) && $this->authed_by_remember($redirect))
 		{
 			$authed = TRUE;
 		}
 
-		$authed = FALSE;
-
 		if ( ! $authed && $redirect)
 		{
-			$this->redirect();
+			redirect($this->config['uri']);
 		}
 
 		return $authed;
@@ -218,6 +228,7 @@ class Auth extends CI_Driver_Library {
 	 * Is authed by role.
 	 *
 	 * @param string[] $roles Roles.
+	 * @param bool $redirect Redirect.
 	 *
 	 * @return bool
 	 */
@@ -235,17 +246,24 @@ class Auth extends CI_Driver_Library {
 			$roles = array($roles);
 		}
 
+		$authed = FALSE;
+
 		foreach ($roles as $role)
 		{
 			if ($this->authed($redirect)
 			    && in_array($role, $_SESSION[$this->config['session_prefix'] . 'roles'])
 			)
 			{
-				return TRUE;
+				$authed = TRUE;
 			}
 		}
 
-		return FALSE;
+		if ( ! $authed && $redirect)
+		{
+			redirect($this->config['uri']);
+		}
+
+		return $authed;
 	}
 
 	/**
@@ -253,6 +271,7 @@ class Auth extends CI_Driver_Library {
 	 * Is authed by group.
 	 *
 	 * @param string $group Group.
+	 * @param bool $redirect Redirect.
 	 *
 	 * @return bool
 	 */
@@ -265,14 +284,21 @@ class Auth extends CI_Driver_Library {
 			$this->CI->$events_library->call_event(__CLASS__, 'pre_authed_by_group', $group);
 		}
 
+		$authed = FALSE;
+
 		if ($this->authed()
 		    && in_array($group, $_SESSION[$this->config['session_prefix'] . 'groups'])
 		)
 		{
-			return TRUE;
+			$authed = TRUE;
 		}
 
-		return FALSE;
+		if ( ! $authed && $redirect)
+		{
+			redirect($this->config['uri']);
+		}
+
+		return $authed;
 	}
 
 	/**

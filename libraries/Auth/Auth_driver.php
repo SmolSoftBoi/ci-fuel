@@ -9,6 +9,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 /**
  * Authentication driver.
+ *
+ * @package CodeIgniter Fuel\Libraries\Auth
  */
 abstract class Auth_driver extends CI_Driver {
 
@@ -99,7 +101,7 @@ abstract class Auth_driver extends CI_Driver {
 	 */
 	public function sign_out()
 	{
-		$this->session->sess_destroy();
+		unset($_SESSION);
 	}
 
 	/**
