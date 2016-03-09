@@ -1,8 +1,8 @@
 <?php
 /**
- *  @copyright Copyright © 2015 - 2016 Kristian Matthews. All rights reserved.
- *  @author    Kristian Matthews <kristian.matthews@my.westminster.ac.uk>
- *  @package   CodeIgniter Fuel
+ * @copyright Copyright © 2015 - 2016 Kristian Matthews. All rights reserved.
+ * @author    Kristian Matthews <kristian.matthews@my.westminster.ac.uk>
+ * @package   CodeIgniter Fuel
  */
 
 defined('BASEPATH') OR exit('No direct script access allowed');
@@ -43,7 +43,10 @@ class Template {
 
 			$body = $this->CI->load->view($body_view_path, $vars, TRUE);
 
-			if ( ! isset($vars['body'])) $vars['body'] = $body;
+			if ( ! isset($vars['body']))
+			{
+				$vars['body'] = $body;
+			}
 		}
 
 		return $this->CI->load->view('templates/' . $template_view, $vars, $return);

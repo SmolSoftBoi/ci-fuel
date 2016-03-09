@@ -1,8 +1,8 @@
 <?php
 /**
- *  @copyright Copyright © 2015 - 2016 Kristian Matthews. All rights reserved.
- *  @author    Kristian Matthews <kristian.matthews@my.westminster.ac.uk>
- *  @package   CodeIgniter Fuel
+ * @copyright Copyright © 2015 - 2016 Kristian Matthews. All rights reserved.
+ * @author    Kristian Matthews <kristian.matthews@my.westminster.ac.uk>
+ * @package   CodeIgniter Fuel
  */
 
 defined('BASEPATH') OR exit('No direct script access allowed');
@@ -24,7 +24,9 @@ class Storage extends CI_Driver_Library {
 
 		$this->CI->config->load('storage');
 
-		if ( ! file_exists($config_path = APPPATH . 'config/' . ENVIRONMENT . '/storage.php') && ! file_exists($config_path = APPPATH . 'config/storage.php'))
+		if ( ! file_exists($config_path = APPPATH . 'config/' . ENVIRONMENT . '/storage.php')
+		     && ! file_exists($config_path = APPPATH . 'config/storage.php')
+		)
 		{
 			show_error('The configuration file storage.php does not exist.');
 		}
@@ -57,7 +59,8 @@ class Storage extends CI_Driver_Library {
 		}
 		else if ( ! isset($storage[$active_group]))
 		{
-			show_error('You have specified an invalid storage group (' . $active_group . ') in your config/storage.php file.');
+			show_error('You have specified an invalid storage group (' . $active_group
+			           . ') in your config/storage.php file.');
 		}
 
 		$params = $storage[$active_group];
@@ -109,7 +112,10 @@ class Storage extends CI_Driver_Library {
 	{
 		$cdn_url = $this->CI->config->slash_item('cdn_url');
 
-		if (empty($cdn_url)) $cdn_url = $this->CI->config->slash_item('base_url');
+		if (empty($cdn_url))
+		{
+			$cdn_url = $this->CI->config->slash_item('base_url');
+		}
 
 		if (isset($protocol))
 		{
@@ -123,7 +129,10 @@ class Storage extends CI_Driver_Library {
 			}
 		}
 
-		if (empty($uri)) return $cdn_url . $this->CI->config->slash_item('cdn_path');
+		if (empty($uri))
+		{
+			return $cdn_url . $this->CI->config->slash_item('cdn_path');
+		}
 
 		if ($this->CI->config->item('enable_query_strings') === FALSE)
 		{

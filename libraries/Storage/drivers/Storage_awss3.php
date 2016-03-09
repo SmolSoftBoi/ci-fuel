@@ -1,8 +1,8 @@
 <?php
 /**
- *  @copyright Copyright © 2015 - 2016 Kristian Matthews. All rights reserved.
- *  @author    Kristian Matthews <kristian.matthews@my.westminster.ac.uk>
- *  @package   CodeIgniter Fuel
+ * @copyright Copyright © 2015 - 2016 Kristian Matthews. All rights reserved.
+ * @author    Kristian Matthews <kristian.matthews@my.westminster.ac.uk>
+ * @package   CodeIgniter Fuel
  */
 
 defined('BASEPATH') OR exit('No direct script access allowed');
@@ -31,13 +31,19 @@ class Storage_awss3 extends Storage_driver {
 			'ACL'    => 'public-read'
 		);
 
-		if (isset($params['mime'])) $object['ContentType'] = $params['mime'];
+		if (isset($params['mime']))
+		{
+			$object['ContentType'] = $params['mime'];
+		}
 
 		if ( ! isset($object['ContentType']))
 		{
 			$mime = get_mime_by_extension($path);
 
-			if ($mime !== FALSE) $object['ContentType'] = $mime;
+			if ($mime !== FALSE)
+			{
+				$object['ContentType'] = $mime;
+			}
 		}
 
 		$result = $this->s3->putObject($object);
