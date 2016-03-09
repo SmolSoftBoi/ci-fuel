@@ -15,12 +15,12 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 abstract class Auth_driver extends CI_Driver {
 
 	/**
-	 * @var string Session prefix.
+	 * @var string $session_prefix Session prefix.
 	 */
 	public $session_prefix;
 
 	/**
-	 * @var CI_Controller CodeIgniter instance.
+	 * @var CI_Controller $CI CodeIgniter instance.
 	 */
 	protected $CI;
 
@@ -101,13 +101,15 @@ abstract class Auth_driver extends CI_Driver {
 	 */
 	public function sign_out()
 	{
-		unset($_SESSION);
+		session_destroy();
 	}
 
 	/**
 	 * Validate credentials.
 	 *
 	 * @param mixed $credentials Credentials.
+	 *
+	 * @return bool Valid.
 	 */
 	public function validate($credentials)
 	{

@@ -227,7 +227,7 @@ class Auth extends CI_Driver_Library {
 	/**
 	 * Is authed by role.
 	 *
-	 * @param string[] $roles Roles.
+	 * @param string|string[] $roles Role(s).
 	 * @param bool $redirect Redirect.
 	 *
 	 * @return bool
