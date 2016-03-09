@@ -1,8 +1,8 @@
 <?php
 /**
- *  @copyright Copyright © 2015 - 2016 Kristian Matthews. All rights reserved.
- *  @author    Kristian Matthews <kristian.matthews@my.westminster.ac.uk>
- *  @package   CodeIgniter Fuel
+ * @copyright Copyright © 2015 - 2016 Kristian Matthews. All rights reserved.
+ * @author    Kristian Matthews <kristian.matthews@my.westminster.ac.uk>
+ * @package   CodeIgniter Fuel
  */
 
 defined('BASEPATH') OR exit('No direct script access allowed');
@@ -271,7 +271,6 @@ class Cart implements Serializable {
 			return FALSE;
 		}
 
-
 		// Check for ID, quantity, price, and name
 		if ( ! isset($item['id']) || ! isset($item['qty']) || ! isset($item['price']) || ! isset($item['name']))
 		{
@@ -279,7 +278,6 @@ class Cart implements Serializable {
 
 			return FALSE;
 		}
-
 
 		// Prep quantity
 		$item['qty'] = trim(preg_replace('/([^0-9])/i', '', $item['qty']));
@@ -292,7 +290,6 @@ class Cart implements Serializable {
 			return FALSE;
 		}
 
-
 		// Validate product ID
 		if ( ! preg_match('/^[' . $this->product_id_rules . ']+$/i', $item['id']))
 		{
@@ -302,7 +299,6 @@ class Cart implements Serializable {
 			return FALSE;
 		}
 
-
 		// Validate product name
 		if ( ! preg_match('/^[' . $this->product_name_rules . ']+$/i', $item['name']))
 		{
@@ -311,7 +307,6 @@ class Cart implements Serializable {
 
 			return FALSE;
 		}
-
 
 		// Prep price
 		$item['price'] = trim(preg_replace('/([^0-9\.])/i', '', $item['price']));
@@ -326,7 +321,6 @@ class Cart implements Serializable {
 			return FALSE;
 		}
 
-
 		// Create unique ID for item
 		$options = '';
 		if (isset($item['options']) && count($item['options']) > 0)
@@ -335,7 +329,6 @@ class Cart implements Serializable {
 		}
 
 		$row_id = hash('sha224', $item['id'] . $options);
-
 
 		// Unset duplicate row ID
 		unset($this->cart_contents['items'][$row_id]);
@@ -362,7 +355,6 @@ class Cart implements Serializable {
 			return FALSE;
 		}
 
-
 		// Prep quantity
 		$item['qty'] = trim(preg_replace('/([^0-9])/i', '', $item['qty']));
 		// Trim leading zeros
@@ -373,7 +365,6 @@ class Cart implements Serializable {
 		{
 			return FALSE;
 		}
-
 
 		// Check if quantity differs
 		if ($this->cart_contents['items'][$item['row_id']]['qty'] === $item['qty'])

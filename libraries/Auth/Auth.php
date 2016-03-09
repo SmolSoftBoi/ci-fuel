@@ -1,8 +1,8 @@
 <?php
 /**
- *  @copyright Copyright © 2015 - 2016 Kristian Matthews. All rights reserved.
- *  @author    Kristian Matthews <kristian.matthews@my.westminster.ac.uk>
- *  @package   CodeIgniter Fuel
+ * @copyright Copyright © 2015 - 2016 Kristian Matthews. All rights reserved.
+ * @author    Kristian Matthews <kristian.matthews@my.westminster.ac.uk>
+ * @package   CodeIgniter Fuel
  */
 
 defined('BASEPATH') OR exit('No direct script access allowed');
@@ -18,7 +18,7 @@ class Auth extends CI_Driver_Library {
 	 * @var array $config Configuration.
 	 */
 	public $config = array(
-		'uri' => NULL,
+		'uri'            => NULL,
 		'session_prefix' => NULL
 	);
 
@@ -114,9 +114,14 @@ class Auth extends CI_Driver_Library {
 
 		$authed = FALSE;
 
-		if ($_SESSION[$this->config['session_prefix'] . 'authed'] === TRUE)
+		$session_authed_key = $this->config['session_prefix'] . 'authed';
+
+		if (isset($_SESSION[$session_authed_key]))
 		{
-			$authed = TRUE;
+			if ($_SESSION[$session_authed_key] === TRUE)
+			{
+				$authed = TRUE;
+			}
 		}
 
 		if ( ! $authed && $redirect)
@@ -145,11 +150,14 @@ class Auth extends CI_Driver_Library {
 
 		$authed = FALSE;
 
-		if ($this->authed($redirect)
-		    && $_SESSION[$this->config['session_prefix'] . 'guest'] === TRUE
-		)
+		$session_guest_key = $this->config['session_prefix'] . 'guest';
+
+		if (isset($_SESSION[$session_guest_key]))
 		{
-			$authed = TRUE;
+			if ($this->authed($redirect) && $_SESSION[$session_guest_key] === TRUE)
+			{
+				$authed = TRUE;
+			}
 		}
 
 		if ( ! $authed && $redirect)
@@ -178,11 +186,14 @@ class Auth extends CI_Driver_Library {
 
 		$authed = FALSE;
 
-		if ($this->authed($redirect)
-		    && $_SESSION[$this->config['session_prefix'] . 'remember'] === TRUE
-		)
+		$session_remember_key = $this->config['session_prefix'] . 'remember';
+
+		if (isset($_SESSION[$session_remember_key]))
 		{
-			$authed = TRUE;
+			if ($this->authed($redirect) && $_SESSION[$session_remember_key] === TRUE)
+			{
+				$authed = TRUE;
+			}
 		}
 
 		if ( ! $authed && $redirect)
@@ -227,8 +238,8 @@ class Auth extends CI_Driver_Library {
 	/**
 	 * Is authed by role.
 	 *
-	 * @param string|string[] $roles Role(s).
-	 * @param bool $redirect Redirect.
+	 * @param string|string[] $roles    Role(s).
+	 * @param bool            $redirect Redirect.
 	 *
 	 * @return bool
 	 */
@@ -248,13 +259,16 @@ class Auth extends CI_Driver_Library {
 
 		$authed = FALSE;
 
-		foreach ($roles as $role)
+		$session_roles_key = $this->config['session_prefix'] . 'roles';
+
+		if (isset($_SESSION[$session_roles_key]))
 		{
-			if ($this->authed($redirect)
-			    && in_array($role, $_SESSION[$this->config['session_prefix'] . 'roles'])
-			)
+			foreach ($roles as $role)
 			{
-				$authed = TRUE;
+				if ($this->authed($redirect) && in_array($role, $_SESSION[$session_roles_key]))
+				{
+					$authed = TRUE;
+				}
 			}
 		}
 
@@ -270,8 +284,8 @@ class Auth extends CI_Driver_Library {
 	 *
 	 * Is authed by group.
 	 *
-	 * @param string $group Group.
-	 * @param bool $redirect Redirect.
+	 * @param string $group    Group.
+	 * @param bool   $redirect Redirect.
 	 *
 	 * @return bool
 	 */
@@ -286,11 +300,14 @@ class Auth extends CI_Driver_Library {
 
 		$authed = FALSE;
 
-		if ($this->authed()
-		    && in_array($group, $_SESSION[$this->config['session_prefix'] . 'groups'])
-		)
+		$session_groups_key = $this->config['session_prefix'] . 'groups';
+
+		if (isset($_SESSION[$session_groups_key]))
 		{
-			$authed = TRUE;
+			if ($this->authed() && in_array($group, $_SESSION[$session_groups_key]))
+			{
+				$authed = TRUE;
+			}
 		}
 
 		if ( ! $authed && $redirect)
