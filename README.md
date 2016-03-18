@@ -6,6 +6,7 @@ Level-up your CodeIgniter applications.
 * Cart
 * Domain
 * Events
+* Fakers
 * Storage
 * Template
 

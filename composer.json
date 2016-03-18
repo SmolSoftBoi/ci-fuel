@@ -19,7 +19,8 @@
 		"source": "https://github.com/EpicKris/ci-fuel"
 	},
 	"suggest": {
-		"aws/aws-sdk-php": "For AWS storage driver."
+		"aws/aws-sdk-php": "For AWS storage driver.",
+		"fzaninotto/faker": "For fakers."
 	},
 	"require-dev": {
 		"phpunit/phpunit": "^5"
